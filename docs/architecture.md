@@ -1,26 +1,8 @@
-
----
-
-```markdown
 # Architecture of the Laboratory Environment
 
 ## 1. General Overview
 
-The environment simulates the infrastructure of a small enterprise where a container management system based on Docker and Kubernetes is deployed. It consists of three virtual machines connected to an isolated local network `192.168.100.0/24`.
-
-+---------------------+
-| Host System |
-| (Vagrant/VirtualBox)|
-+----------+----------+
-|
-+----------------------+----------------------+
-| | |
-+-------v-------+ +-------v-------+ +-------v-------+
-| prod-server | | dev-workstation| | client |
-| (Master) | | (Developer) | | (Verifier) |
-| IP: .10 |<---->| IP: .20 | | IP: .30 |
-+---------------+ +---------------+ +---------------+
-
+The environment simulates the infrastructure of a small enterprise where a container management system based on Docker and Kubernetes is deployed. It consists of three virtual machines connected to an isolated local network `192.168.100.0/24`
 
 All machines run **Alt Linux 10.4** (Server or Workstation). Communication between them takes place over the VirtualBox internal network (host-only or private network).
 
@@ -135,9 +117,3 @@ The following security measures are implemented in the environment:
 
 - The number of replicas in a Deployment can be changed with the command `kubectl scale deployment frontend --replicas=4`. In the current configuration (single node), all pods are placed on `prod-server`, but when worker nodes are added, Kubernetes automatically distributes the load.
 - The private registry runs as a single instance, which is acceptable for a laboratory environment. For production, a highly available storage (e.g., S3 or external registry) is recommended.
-
-## 8. Conclusion
-
-This architecture demonstrates the complete containerization cycle: from writing code and building an image to orchestration and security enforcement. It is built on the domestic Alt Linux OS, which aligns with import substitution requirements and can serve as a foundation for real small business projects.
-
-All components are automated with Vagrant and shell scripts, ensuring reproducibility and ease of deployment.
