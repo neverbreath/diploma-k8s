@@ -1,10 +1,8 @@
-Как добавить блок про Client в этот Vargantfile?
-
 Vagrant.configure("2") do |config|
 
   # ---------- Prod-Server ----------
   config.vm.define "prod-server" do |ps|
-    ps.vm.box = "altlinux/server10"                # замените на актуальный box
+    ps.vm.box = "BaseALT/alt-server-10-amd64"
     ps.vm.hostname = "prod-server"
     ps.vm.network "private_network", ip: "192.168.100.10"
     ps.vm.provider "virtualbox" do |vb|
@@ -12,21 +10,21 @@ Vagrant.configure("2") do |config|
       vb.cpus = 2
     end
 
-    # Создание пользователя admin с sudo
+    # Create admin user with sudo
     ps.vm.provision "shell", inline: <<-SHELL
-      # Создаём пользователя admin, если его ещё нет
+      # Create user admin if it does not exist yet
       id -u admin &>/dev/null || useradd -m -s /bin/bash admin
-      # Устанавливаем пароль (по желанию)
+      # Set password (optional)
       echo "admin:password" | chpasswd
-      # Даём права sudo без пароля
+      # Grant passwordless sudo privileges
       echo "admin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/admin
       chmod 440 /etc/sudoers.d/admin
-      # Опционально добавляем в группу docker (создадим её позже, но можно заранее)
+      # Optionally add to docker group (will be created later, but can be done now)
       # groupadd docker || true
       # usermod -aG docker admin
     SHELL
 
-    # Основной скрипт настройки выполняется от admin
+    # Main provisioning script runs as admin
     ps.vm.provision "shell", privileged: false, inline: <<-SHELL
       su - admin -c 'bash /vagrant/scripts/provision-master.sh'
     SHELL
@@ -34,7 +32,7 @@ Vagrant.configure("2") do |config|
 
   # ---------- Dev-Workstation ----------
   config.vm.define "dev-workstation" do |dw|
-    dw.vm.box = "altlinux/workstation10"          # замените на актуальный box
+    dw.vm.box = "BaseALT/alt-workstation-10-amd64"
     dw.vm.hostname = "dev-workstation"
     dw.vm.network "private_network", ip: "192.168.100.20"
     dw.vm.provider "virtualbox" do |vb|
@@ -42,18 +40,18 @@ Vagrant.configure("2") do |config|
       vb.cpus = 1
     end
 
-    # Создание пользователя developer с sudo
+    # Create developer user with sudo
     dw.vm.provision "shell", inline: <<-SHELL
       id -u developer &>/dev/null || useradd -m -s /bin/bash developer
       echo "developer:password" | chpasswd
       echo "developer ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/developer
       chmod 440 /etc/sudoers.d/developer
-      # Группа docker будет создана при установке docker, но можно сразу добавить
+      # The docker group will be created when docker is installed, but we can add now
       groupadd docker || true
       usermod -aG docker developer
     SHELL
 
-    # Основной скрипт настройки выполняется от developer
+    # Main provisioning script runs as developer
     dw.vm.provision "shell", privileged: false, inline: <<-SHELL
       su - developer -c 'bash /vagrant/scripts/provision-devel.sh'
     SHELL
@@ -61,13 +59,14 @@ Vagrant.configure("2") do |config|
 
   # ---------- Client ----------
   config.vm.define "client" do |cl|
-    cl.vm.box = "altlinux/workstation10"
+    cl.vm.box = "BaseALT/alt-workstation-10-amd64"
     cl.vm.hostname = "client"
     cl.vm.network "private_network", ip: "192.168.100.30"
     cl.vm.provider "virtualbox" do |vb|
       vb.memory = 1024
       vb.cpus = 1
     end
-    # Подключаем скрипт настройки клиента
-  cl.vm.provision "shell", path: "scripts/provision-client.sh", privileged: false
+    # Attach client provisioning script
+    cl.vm.provision "shell", path: "scripts/provision-client.sh", privileged: false
+  end
 end
