@@ -30,15 +30,16 @@ Both components are built into Docker images, published to a private registry on
 ## Quick Start
 
 1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/diploma-k8s.git
-   cd diploma-k8s
-   
-````markdown
+
+```bash
+git clone https://github.com/yourusername/diploma-k8s.git
+cd diploma-k8s
+```
+
 2. **Start the deployment:**
 
-    ```bash
-    vagrant up
+```bash
+vagrant up
 ```
 
 The process takes 10–15 minutes. Vagrant will automatically create three virtual machines, perform all required configuration (Docker, Kubernetes, network setup, application deployment).
@@ -52,12 +53,12 @@ The process takes 10–15 minutes. Vagrant will automatically create three virtu
 
 You can manage the Kubernetes cluster from the host machine by copying the `admin.conf` configuration from the repository:
 
-    ```bash
-    mkdir -p ~/.kube
-    cp configs/admin.conf ~/.kube/config
-    sed -i 's/127.0.0.1/192.168.100.10/' ~/.kube/config
-    kubectl get nodes
-    ```
+```bash
+mkdir -p ~/.kube
+cp configs/admin.conf ~/.kube/config
+sed -i 's/127.0.0.1/192.168.100.10/' ~/.kube/config
+kubectl get nodes
+```
 
 Expected output:
 
@@ -68,80 +69,40 @@ prod-server    Ready    control-plane   10m   v1.xx.x
 
 To check pods and services:
 
-    ```bash
-    kubectl get pods -A
-    kubectl get svc -A
-    ```
-
-## Repository Structure
-
-```text
-diploma-k8s/
-├── README.md                         # This file
-├── Vagrantfile                       # Virtual machine definitions
-├── docker/
-│   ├── frontend/
-│   │   ├── Dockerfile                # Frontend image build (Nginx)
-│   │   └── html/
-│   │       └── index.html            # Static page
-│   └── backend/
-│       ├── Dockerfile                # Backend image build (Python/Flask)
-│       ├── app.py                    # Flask application source code
-│       └── requirements.txt          # Dependencies
-├── kubernetes/
-│   ├── namespace.yaml                # Namespace for applications
-│   ├── frontend-deployment.yaml      # Frontend Deployment
-│   ├── frontend-svc.yaml             # Frontend Service (NodePort 30080)
-│   ├── backend-deployment.yaml       # Backend Deployment
-│   ├── backend-svc.yaml              # Backend Service (NodePort 30500)
-│   ├── dev-role.yaml                 # Role for developer (RBAC)
-│   ├── dev-rolebinding.yaml          # RoleBinding to ServiceAccount
-│   ├── network-policy.yaml           # Network policy (frontend -> backend)
-│   ├── dashboard-admin.yaml          # ServiceAccount and ClusterRoleBinding for Dashboard
-│   └── pod-security.yaml             # Pod Security Standards labels for namespace
-├── configs/
-│   ├── admin.conf                    # kubectl configuration (generated on prod-server)
-│   ├── registry.crt                  # Private registry certificate (generated automatically)
-│   └── hosts.sample                  # Example /etc/hosts entry
-├── scripts/
-│   ├── provision-master.sh           # prod-server setup
-│   └── provision-devel.sh            # dev-workstation setup
-└── docs/
-    ├── architecture.md               # Detailed architecture description (this file)
-    └── manual-deploy.md              # Manual deployment guide (optional)
+```bash
+kubectl get pods -A
+kubectl get svc -A
 ```
 
 ## Additional Features
 
 ### Access to Kubernetes Dashboard
 
-The official Kubernetes Dashboard is deployed on `prod-server`. To access it from the host machine:
+The official Kubernetes Dashboard is deployed on `prod-server`. **To access it from the host machine**:
 
-1. Connect to `prod-server`:
+1. **Connect to `prod-server`**:
 
-   ```bash
-   vagrant ssh prod-server
-   ```
+```bash
+vagrant ssh prod-server
+```
 
-2. Start the proxy:
+2. **Start the proxy**:
 
-   ```bash
-   kubectl proxy --address=0.0.0.0 --accept-hosts='.*' &
-   ```
+```bash
+kubectl proxy --address=0.0.0.0 --accept-hosts='.*' &
+```
 
-3. On the host, open in a browser:
+3. **On the host, open in a browser**:
 
-   ```text
-   http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-   ```
+```text
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+```
 
-4. Obtain a token for login:
+4. **Obtain a token for login**:
 
-   ```bash
-   kubectl -n kubernetes-dashboard create token admin-user
-   ```
-
-   (or use the command from the Dashboard documentation to extract the token from a Secret).
+```bash
+kubectl -n kubernetes-dashboard create token admin-user
+```
 
 ### Image Vulnerability Scanning (Trivy)
 
@@ -157,17 +118,4 @@ If needed, install Trivy according to the official documentation (it is not inst
 
 ## Manual Deployment (Without Vagrant)
 
-If you prefer to deploy the environment manually (e.g., on existing machines), refer to [docs/manual-deploy.md](docs/manual-deploy.md). It describes all steps corresponding to the technical part of the diploma project.
-
-## Alignment with the Diploma Project
-
-This repository fully implements all stages described in the technical section of the diploma:
-
-- ✅ Docker installation on Alt Linux.
-- ✅ Creation of test applications (frontend/backend) and image building.
-- ✅ Kubernetes cluster initialization (kubeadm) and Flannel setup.
-- ✅ Configuration of a private Docker Registry with TLS.
-- ✅ Declarative application deployment and scaling.
-- ✅ Implementation of security measures (RBAC, NetworkPolicy, Pod Security Standards, capability restrictions, Docker Content Trust – optional).
-- ✅ Installation and configuration of Kubernetes Dashboard.
-- ✅ Verification of service availability from the client machine.
+If you prefer to deploy the environment manually (e.g., on existing machines), use [/docs/manual-deploy.md](/docs/manual-deploy.md). It describes all steps corresponding to the technical part of the diploma project.
