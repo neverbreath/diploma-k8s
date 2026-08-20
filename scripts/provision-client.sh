@@ -1,31 +1,31 @@
 #!/bin/bash
 set -e
 
-# Скрипт выполняется от имени пользователя с доступом к sudo (например, vagrant или admin).
-# Все привилегированные операции используют sudo.
+# The script is run as a user with sudo access (e.g., vagrant or admin).
+# All privileged operations use sudo.
 
-echo "=== [Client] Начало настройки ==="
+echo "=== [Client] Starting setup ==="
 
-# 1. Создание пользователя user (если ещё не существует)
+# 1. Create user 'user' (if not already exists)
 if ! id user &>/dev/null; then
     sudo useradd -m -s /bin/bash user
-    echo "Пользователь 'user' создан"
+    echo "User 'user' created"
 else
-    echo "Пользователь 'user' уже существует"
+    echo "User 'user' already exists"
 fi
 
-# 2. Установка curl — основного инструмента проверки HTTP-доступности
-echo "--- Установка curl ---"
+# 2. Install curl — the main tool for checking HTTP availability
+echo "--- Installing curl ---"
 sudo apt-get update
 sudo apt-get install -y curl
 
-# 3. Добавление записи в /etc/hosts для удобства обращения к серверу по имени
-echo "--- Настройка hosts ---"
+# 3. Add entry to /etc/hosts for convenient access to the server by name
+echo "--- Configuring hosts ---"
 echo "192.168.100.10 prod-server" | sudo tee -a /etc/hosts
 
-# 4. Вывод инструкции по проверке
-echo "=== [Client] Настройка завершена ==="
-echo "Для проверки доступности сервисов выполните команды:"
+# 4. Output verification instructions
+echo "=== [Client] Setup completed ==="
+echo "To check the availability of services, run the commands:"
 echo "  curl http://192.168.100.10:30080"
 echo "  curl http://192.168.100.10:30500"
-echo "Или откройте в браузере указанные адреса."
+echo "Or open the specified addresses in your browser."
