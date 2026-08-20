@@ -1,51 +1,50 @@
 #!/bin/bash
 set -e
 
-# Скрипт выполняется от имени пользователя developer с правами sudo.
-# Пользователь developer уже создан в Vagrantfile.
+# The script is run as user developer with sudo privileges.
+# User developer is already created in the Vagrantfile.
 
-echo "=== [Dev-Workstation] Начало настройки ==="
+echo "=== [Dev-Workstation] Starting setup ==="
 
-# 1. Установка Docker
-echo "--- Установка Docker ---"
+# 1. Installing Docker
+echo "--- Installing Docker ---"
 sudo apt-get update
 sudo apt-get install -y docker-engine
 sudo systemctl enable --now docker
 
-# 2. Добавление текущего пользователя (developer) в группу docker (если ещё не добавлен)
+# 2. Adding current user (developer) to the docker group (if not already added)
 sudo usermod -aG docker $USER
 
-# 3. Установка kubectl
-echo "--- Установка kubectl ---"
+# 3. Installing kubectl
+echo "--- Installing kubectl ---"
 sudo apt-get install -y kubectl
 
-# 4. Настройка доступа к приватному Docker Registry (сертификат)
-echo "--- Настройка доверия к приватному реестру ---"
+# 4. Configuring access to private Docker Registry (certificate)
+echo "--- Configuring trust for private registry ---"
 sudo mkdir -p /etc/docker/certs.d/192.168.100.10:5000
 sudo cp /vagrant/configs/registry.crt /etc/docker/certs.d/192.168.100.10:5000/ca.crt
 
-# 5. Копирование kubeconfig в домашний каталог developer
-echo "--- Копирование kubeconfig ---"
+# 5. Copying kubeconfig to developer's home directory
+echo "--- Copying kubeconfig ---"
 mkdir -p $HOME/.kube
 sudo cp /vagrant/configs/admin.conf $HOME/.kube/config
 sudo chown -R $(id -u):$(id -g) $HOME/.kube
-# Замена адреса API-сервера с 127.0.0.1 на реальный IP
+# Replacing API server address from 127.0.0.1 to real IP
 sed -i 's/127\.0\.0\.1/192.168.100.10/g' $HOME/.kube/config
 
-# 6. Сборка и публикация образов в приватный реестр
-echo "--- Сборка и публикация frontend и backend ---"
-# Так как docker требует прав root или членства в группе docker,
-# а текущая сессия ещё не перечитала группы (usermod выше), 
-# мы можем выполнить docker через sudo или запустить новый su.
-# Проще: использовать sudo docker для сборки? 
-# Но сборка из-под root может создать файлы с root-владельцем, что нежелательно.
-# Лучше выполнить команды в новом su, где группа docker уже активна.
-# Или перезапустить сессию? В скрипте мы можем сделать:
-#   exec sg docker -c "bash /vagrant/scripts/build_and_push.sh"
-# Но для простоты предположим, что пользователь developer добавлен в группу docker в Vagrantfile
-# и перелогин уже произошёл (после создания пользователя и добавления в группу, 
-# затем мы запускаем основной скрипт через su - developer, который читает группы заново).
-# Поэтому можно запускать docker без sudo.
+# 6. Building and publishing images to private registry
+echo "--- Building and publishing frontend and backend ---"
+# Since docker requires root privileges or membership in the docker group,
+# and the current session has not yet reloaded groups (usermod above),
+# we could run docker via sudo or start a new su. The simpler approach is
+# to use sudo docker for building? However, building as root may create
+# files owned by root, which is undesirable. Better to run commands in a
+# new su where the docker group is already active. Or restart the session?
+# In the script we could do: exec sg docker -c "bash /vagrant/scripts/build_and_push.sh"
+# But for simplicity, we assume that the developer user has been added to
+# the docker group in the Vagrantfile and a re-login has already occurred
+# (after user creation and group addition, we run the main script via
+# su - developer, which reloads groups). Therefore we can run docker without sudo.
 cd /vagrant/docker/frontend
 docker build -t frontend:v1 .
 docker tag frontend:v1 192.168.100.10:5000/frontend:v1
@@ -56,4 +55,4 @@ docker build -t backend:v1 .
 docker tag backend:v1 192.168.100.10:5000/backend:v1
 docker push 192.168.100.10:5000/backend:v1
 
-echo "=== [Dev-Workstation] Настройка завершена ==="
+echo "=== [Dev-Workstation] Setup completed ==="
