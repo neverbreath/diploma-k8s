@@ -32,7 +32,7 @@ Both components are built into Docker images, published to a private registry on
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/yourusername/diploma-k8s.git
+git clone https://github.com/neverbreath/diploma-k8s.git
 cd diploma-k8s
 ```
 
