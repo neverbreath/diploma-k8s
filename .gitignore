@@ -1,0 +1,95 @@
+# ----------------------------------------------
+# Vagrant / VirtualBox
+# ----------------------------------------------
+.vagrant/                     # Vagrant runtime data
+*.box                         # Vagrant box files
+vagrant.log                   # Vagrant logs
+vagrant_cloud*.json           # Vagrant Cloud metadata
+*.vdi                         # VirtualBox disk images
+*.vmdk                        # VirtualBox disk images
+*.vbox                        # VirtualBox machine files
+*.vbox-prev                   # VirtualBox machine backups
+*.ova                         # VirtualBox appliance
+*.ovf                         # VirtualBox appliance
+
+# ----------------------------------------------
+# Python (Flask backend and scripts)
+# ----------------------------------------------
+__pycache__/                  # Python bytecode cache
+*.py[cod]                     # Compiled Python files
+*.so                          # Compiled shared libraries
+.Python                       # Python virtual environment marker
+env/                          # Virtual environment
+venv/                         # Virtual environment
+.venv/                        # Virtual environment
+pip-log.txt                   # Pip log
+pip-delete-this-directory.txt # Pip temporary file
+.pytest_cache/                # Pytest cache
+.coverage                     # Coverage report
+htmlcov/                      # HTML coverage report
+dist/                         # Distribution builds
+build/                        # Build artifacts
+*.egg-info/                   # Package metadata
+.eggs/                        # Egg cache
+*.manifest                    # Python manifest files
+*.spec                        # RPM spec files
+
+# ----------------------------------------------
+# Docker
+# ----------------------------------------------
+*.pid                         # Process ID files (runtime)
+docker-compose.override.yml   # Local overrides for compose
+
+# ----------------------------------------------
+# Kubernetes / kubectl
+# ----------------------------------------------
+*.kubeconfig                  # Kubeconfig files
+admin.conf                    # Admin kubeconfig
+.kube/                        # Kubernetes config directory
+kubeconfig*.yaml              # Any kubeconfig YAML files
+
+# ----------------------------------------------
+# Secrets and environment variables
+# ----------------------------------------------
+.env                          # Environment variables
+.env.local                    # Local environment overrides
+.env.*.local                  # Local environment overrides
+*.secret                      # Secret files
+secrets/                      # Secret directories
+credentials/                  # Credentials directories
+*.pem                         # Private keys
+*.key                         # Private keys
+*.crt                         # Certificates
+
+# ----------------------------------------------
+# Editors and IDEs
+# ----------------------------------------------
+.vscode/                      # VS Code settings
+.idea/                        # IntelliJ IDEA
+*.swp                         # Vim swap files
+*.swo                         # Vim swap files
+*~                            # Backup files
+.project                      # Eclipse project files
+.classpath                    # Eclipse classpath
+.settings/                    # Eclipse settings
+
+# ----------------------------------------------
+# Logs, temporary files, archives
+# ----------------------------------------------
+*.log                         # Log files
+logs/                         # Log directory
+tmp/                          # Temporary files
+temp/                         # Temporary files
+*.tmp                         # Temporary files
+*.bak                         # Backup files
+*.orig                        # Original files (patches)
+*.zip                         # Archives
+*.tar.gz                      # Archives
+*.tgz                         # Archives
+
+# ----------------------------------------------
+# OS-specific files
+# ----------------------------------------------
+.DS_Store                     # macOS Finder metadata
+Thumbs.db                     # Windows thumbnails
+desktop.ini                   # Windows folder settings
